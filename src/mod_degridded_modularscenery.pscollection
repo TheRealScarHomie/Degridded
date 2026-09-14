@@ -1,0 +1,93 @@
+<PscollectionRoot count="10" game="Planet Coaster 2">
+	<prepared_statements>
+		<preparedstatement arg_count="1">
+			<args>
+				<arg arg_type="3" arg_index="1" />
+			</args>
+			<statement_name pool_type="6">DGGetAllSceneryPiecesByPrefabType</statement_name>
+			<sql_query pool_type="6">SELECT * FROM ModularSceneryParts WHERE DataPrefabName = ?1;</sql_query>
+		</preparedstatement>
+		<preparedstatement arg_count="1">
+			<args>
+				<arg arg_type="3" arg_index="1" />
+			</args>
+			<statement_name>DGGetSceneryUIDataOfPart</statement_name>
+			<sql_query>SELECT * FROM UIData WHERE SceneryPartName=?1;</sql_query>
+		</preparedstatement>
+		<preparedstatement arg_count="1">
+			<args>
+				<arg arg_type="3" arg_index="1" />
+			</args>
+			<statement_name>DGGetScenerySimulationData</statement_name>
+			<sql_query>SELECT * FROM Simulation WHERE SceneryPartName=?1;</sql_query>
+		</preparedstatement>
+		<preparedstatement arg_count="1">
+			<args>
+				<arg arg_type="3" arg_index="1" />
+			</args>
+			<statement_name>DGGetSceneryThemingData</statement_name>
+			<sql_query>SELECT * FROM Theming WHERE SceneryPartName=?1;</sql_query>
+		</preparedstatement>
+		<preparedstatement arg_count="1">
+			<args>
+				<arg arg_type="3" arg_index="1" />
+			</args>
+			<statement_name>DGGetSceneryMetadataTags</statement_name>
+			<sql_query>SELECT * FROM Metadata_Tags WHERE SceneryPart=?1;</sql_query>
+		</preparedstatement>
+		<preparedstatement arg_count="8">
+			<args pool_type="4">
+				<arg arg_type="3" arg_index="1" />
+				<arg arg_type="3" arg_index="2" />
+				<arg arg_type="3" arg_index="3" />
+				<arg arg_type="3" arg_index="4" />
+				<arg arg_type="3" arg_index="5" />
+				<arg arg_type="2" arg_index="6" />
+				<arg arg_type="2" arg_index="7" />
+				<arg arg_type="2" arg_index="8" />
+			</args>
+			<statement_name>DGAddModularSceneryPart</statement_name>
+			<sql_query>INSERT OR IGNORE INTO ModularSceneryParts (SceneryPartName, PrefabName, DataPrefabName, ContentPack, UGCID, BoxXSize, BoxYSize, BoxZSize) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);</sql_query>
+		</preparedstatement>
+		<preparedstatement arg_count="5">
+			<args pool_type="4">
+				<arg arg_type="3" arg_index="1" />
+				<arg arg_type="0" arg_index="2" />
+				<arg arg_type="0" arg_index="3" />
+				<arg arg_type="0" arg_index="4" />
+				<arg arg_type="0" arg_index="5" />
+			</args>
+			<statement_name>DGAddScenerySimulationData</statement_name>
+			<sql_query>INSERT OR IGNORE INTO Simulation (SceneryPartName,BuildCost,HourlyRunningCost,ResearchPack,RequiresUnlockInSandbox) VALUES(?1, ?2, ?3, ?4, ?5);</sql_query>
+		</preparedstatement>
+		<preparedstatement arg_count="4">
+			<args pool_type="4">
+				<arg arg_type="3" arg_index="1" />
+				<arg arg_type="0" arg_index="2" />
+				<arg arg_type="0" arg_index="3" />
+				<arg arg_type="0" arg_index="4" />
+			</args>
+			<statement_name>DGAddSceneryThemingData</statement_name>
+			<sql_query>INSERT OR IGNORE INTO Theming (SceneryPartName,Weight,Radius,FalloffRadius) VALUES(?1, ?2, ?3, ?4);</sql_query>
+		</preparedstatement>
+		<preparedstatement arg_count="5">
+			<args pool_type="4">
+				<arg arg_type="3" arg_index="1" />
+				<arg arg_type="3" arg_index="2" />
+				<arg arg_type="3" arg_index="3" />
+				<arg arg_type="3" arg_index="4" />
+				<arg arg_type="1" arg_index="5" />
+			</args>
+			<statement_name>DGAddSceneryUIData</statement_name>
+			<sql_query>INSERT OR IGNORE INTO UIData (SceneryPartName,LabelTextSymbol,DescriptionTextSymbol,Icon,ReleaseGroup) VALUES(?1, ?2, ?3, ?4, ?5);</sql_query>
+		</preparedstatement>
+		<preparedstatement arg_count="2">
+			<args pool_type="4">
+				<arg arg_type="3" arg_index="1" />
+				<arg arg_type="3" arg_index="2" />
+			</args>
+			<statement_name>DGAddSceneryTag</statement_name>
+			<sql_query>INSERT INTO Metadata_Tags (SceneryPart, Tag) VALUES (?1, ?2);</sql_query>
+		</preparedstatement>
+	</prepared_statements>
+</PscollectionRoot>
