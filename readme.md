@@ -10,3 +10,6 @@ Requires only ACSE which can be downloaded here: https://www.nexusmods.com/plane
 
 Installation:
 To install place the file and ACSEs file in [whereever your steam downloads games]\steamapps\common\Planet Coaster 2\Win64\ovldata] (ensure they arent zips)
+
+Nexus Link:
+https://www.nexusmods.com/planetcoaster2/mods/54
