@@ -1,93 +1,48 @@
-<PscollectionRoot count="10" game="Planet Coaster 2">
+<PscollectionRoot count="11" game="Planet Coaster 2">
 	<prepared_statements>
-		<preparedstatement arg_count="1">
-			<args>
-				<arg arg_type="3" arg_index="1" />
-			</args>
-			<statement_name pool_type="6">DGGetAllSceneryPiecesByPrefabType</statement_name>
-			<sql_query pool_type="6">SELECT * FROM ModularSceneryParts WHERE DataPrefabName = ?1;</sql_query>
+		<preparedstatement>
+			<statement_name>DGGetNewVariantNames</statement_name>
+			<sql_query>SELECT p.SceneryPartName FROM ModularSceneryParts p JOIN UIData u ON u.SceneryPartName = p.SceneryPartName WHERE p.DataPrefabName = 'OnGrid' AND (p.SceneryPartName || '_ScalableScenery') NOT IN (SELECT SceneryPartName FROM ModularSceneryParts);</sql_query>
 		</preparedstatement>
-		<preparedstatement arg_count="1">
-			<args>
-				<arg arg_type="3" arg_index="1" />
-			</args>
-			<statement_name>DGGetSceneryUIDataOfPart</statement_name>
-			<sql_query>SELECT * FROM UIData WHERE SceneryPartName=?1;</sql_query>
+		<preparedstatement>
+			<statement_name>DGAddTagsScalable</statement_name>
+			<sql_query>INSERT INTO Metadata_Tags (SceneryPart, Tag) SELECT t.SceneryPart || '_ScalableScenery', CASE WHEN t.Tag = 'Filter_GridProperty_Grid' THEN 'Filter_GridProperty_OffGrid' ELSE t.Tag END FROM Metadata_Tags t JOIN ModularSceneryParts p ON p.SceneryPartName = t.SceneryPart WHERE p.DataPrefabName = 'OnGrid' AND (t.SceneryPart || '_ScalableScenery') NOT IN (SELECT SceneryPartName FROM ModularSceneryParts);</sql_query>
 		</preparedstatement>
-		<preparedstatement arg_count="1">
-			<args>
-				<arg arg_type="3" arg_index="1" />
-			</args>
-			<statement_name>DGGetScenerySimulationData</statement_name>
-			<sql_query>SELECT * FROM Simulation WHERE SceneryPartName=?1;</sql_query>
+		<preparedstatement>
+			<statement_name>DGAddThemingScalable</statement_name>
+			<sql_query>INSERT OR IGNORE INTO Theming (SceneryPartName, Weight, Radius, FalloffRadius) SELECT th.SceneryPartName || '_ScalableScenery', th.Weight, th.Radius, th.FalloffRadius FROM Theming th JOIN ModularSceneryParts p ON p.SceneryPartName = th.SceneryPartName WHERE p.DataPrefabName = 'OnGrid' AND (th.SceneryPartName || '_ScalableScenery') NOT IN (SELECT SceneryPartName FROM ModularSceneryParts);</sql_query>
 		</preparedstatement>
-		<preparedstatement arg_count="1">
-			<args>
-				<arg arg_type="3" arg_index="1" />
-			</args>
-			<statement_name>DGGetSceneryThemingData</statement_name>
-			<sql_query>SELECT * FROM Theming WHERE SceneryPartName=?1;</sql_query>
+		<preparedstatement>
+			<statement_name>DGAddSimulationScalable</statement_name>
+			<sql_query>INSERT OR IGNORE INTO Simulation (SceneryPartName, BuildCost, HourlyRunningCost, ResearchPack, RequiresUnlockInSandbox) SELECT s.SceneryPartName || '_ScalableScenery', s.BuildCost, s.HourlyRunningCost, s.ResearchPack, s.RequiresUnlockInSandbox FROM Simulation s JOIN ModularSceneryParts p ON p.SceneryPartName = s.SceneryPartName WHERE p.DataPrefabName = 'OnGrid' AND (s.SceneryPartName || '_ScalableScenery') NOT IN (SELECT SceneryPartName FROM ModularSceneryParts);</sql_query>
 		</preparedstatement>
-		<preparedstatement arg_count="1">
-			<args>
-				<arg arg_type="3" arg_index="1" />
-			</args>
-			<statement_name>DGGetSceneryMetadataTags</statement_name>
-			<sql_query>SELECT * FROM Metadata_Tags WHERE SceneryPart=?1;</sql_query>
+		<preparedstatement>
+			<statement_name>DGAddUIDataScalable</statement_name>
+			<sql_query>INSERT OR IGNORE INTO UIData (SceneryPartName, LabelTextSymbol, DescriptionTextSymbol, Icon, ReleaseGroup) SELECT u.SceneryPartName || '_ScalableScenery', u.LabelTextSymbol, u.DescriptionTextSymbol, u.SceneryPartName, u.ReleaseGroup FROM UIData u JOIN ModularSceneryParts p ON p.SceneryPartName = u.SceneryPartName WHERE p.DataPrefabName = 'OnGrid' AND (u.SceneryPartName || '_ScalableScenery') NOT IN (SELECT SceneryPartName FROM ModularSceneryParts);</sql_query>
 		</preparedstatement>
-		<preparedstatement arg_count="8">
-			<args pool_type="4">
-				<arg arg_type="3" arg_index="1" />
-				<arg arg_type="3" arg_index="2" />
-				<arg arg_type="3" arg_index="3" />
-				<arg arg_type="3" arg_index="4" />
-				<arg arg_type="3" arg_index="5" />
-				<arg arg_type="2" arg_index="6" />
-				<arg arg_type="2" arg_index="7" />
-				<arg arg_type="2" arg_index="8" />
-			</args>
-			<statement_name>DGAddModularSceneryPart</statement_name>
-			<sql_query>INSERT OR IGNORE INTO ModularSceneryParts (SceneryPartName, PrefabName, DataPrefabName, ContentPack, UGCID, BoxXSize, BoxYSize, BoxZSize) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);</sql_query>
+		<preparedstatement>
+			<statement_name>DGAddPartsScalable</statement_name>
+			<sql_query>INSERT OR IGNORE INTO ModularSceneryParts (SceneryPartName, PrefabName, DataPrefabName, ContentPack, UGCID, BoxXSize, BoxYSize, BoxZSize) SELECT SceneryPartName || '_ScalableScenery', SceneryPartName, 'SurfaceScaling', ContentPack, UGCID, BoxXSize, BoxYSize, BoxZSize FROM ModularSceneryParts WHERE DataPrefabName = 'OnGrid';</sql_query>
 		</preparedstatement>
-		<preparedstatement arg_count="5">
-			<args pool_type="4">
-				<arg arg_type="3" arg_index="1" />
-				<arg arg_type="0" arg_index="2" />
-				<arg arg_type="0" arg_index="3" />
-				<arg arg_type="0" arg_index="4" />
-				<arg arg_type="0" arg_index="5" />
-			</args>
-			<statement_name>DGAddScenerySimulationData</statement_name>
-			<sql_query>INSERT OR IGNORE INTO Simulation (SceneryPartName,BuildCost,HourlyRunningCost,ResearchPack,RequiresUnlockInSandbox) VALUES(?1, ?2, ?3, ?4, ?5);</sql_query>
+		<preparedstatement>
+			<statement_name>DGAddTagsSurface</statement_name>
+			<sql_query>INSERT INTO Metadata_Tags (SceneryPart, Tag) SELECT t.SceneryPart || '_SurfaceScaling', CASE WHEN t.Tag = 'Filter_GridProperty_Grid' THEN 'Filter_GridProperty_OffGrid' ELSE t.Tag END FROM Metadata_Tags t JOIN ModularSceneryParts p ON p.SceneryPartName = t.SceneryPart WHERE p.DataPrefabName = 'OnGrid' AND (t.SceneryPart || '_SurfaceScaling') NOT IN (SELECT SceneryPartName FROM ModularSceneryParts);</sql_query>
 		</preparedstatement>
-		<preparedstatement arg_count="4">
-			<args pool_type="4">
-				<arg arg_type="3" arg_index="1" />
-				<arg arg_type="0" arg_index="2" />
-				<arg arg_type="0" arg_index="3" />
-				<arg arg_type="0" arg_index="4" />
-			</args>
-			<statement_name>DGAddSceneryThemingData</statement_name>
-			<sql_query>INSERT OR IGNORE INTO Theming (SceneryPartName,Weight,Radius,FalloffRadius) VALUES(?1, ?2, ?3, ?4);</sql_query>
+		<preparedstatement>
+			<statement_name>DGAddThemingSurface</statement_name>
+			<sql_query>INSERT OR IGNORE INTO Theming (SceneryPartName, Weight, Radius, FalloffRadius) SELECT th.SceneryPartName || '_SurfaceScaling', th.Weight, th.Radius, th.FalloffRadius FROM Theming th JOIN ModularSceneryParts p ON p.SceneryPartName = th.SceneryPartName WHERE p.DataPrefabName = 'OnGrid' AND (th.SceneryPartName || '_SurfaceScaling') NOT IN (SELECT SceneryPartName FROM ModularSceneryParts);</sql_query>
 		</preparedstatement>
-		<preparedstatement arg_count="5">
-			<args pool_type="4">
-				<arg arg_type="3" arg_index="1" />
-				<arg arg_type="3" arg_index="2" />
-				<arg arg_type="3" arg_index="3" />
-				<arg arg_type="3" arg_index="4" />
-				<arg arg_type="1" arg_index="5" />
-			</args>
-			<statement_name>DGAddSceneryUIData</statement_name>
-			<sql_query>INSERT OR IGNORE INTO UIData (SceneryPartName,LabelTextSymbol,DescriptionTextSymbol,Icon,ReleaseGroup) VALUES(?1, ?2, ?3, ?4, ?5);</sql_query>
+		<preparedstatement>
+			<statement_name>DGAddSimulationSurface</statement_name>
+			<sql_query>INSERT OR IGNORE INTO Simulation (SceneryPartName, BuildCost, HourlyRunningCost, ResearchPack, RequiresUnlockInSandbox) SELECT s.SceneryPartName || '_SurfaceScaling', s.BuildCost, s.HourlyRunningCost, s.ResearchPack, s.RequiresUnlockInSandbox FROM Simulation s JOIN ModularSceneryParts p ON p.SceneryPartName = s.SceneryPartName WHERE p.DataPrefabName = 'OnGrid' AND (s.SceneryPartName || '_SurfaceScaling') NOT IN (SELECT SceneryPartName FROM ModularSceneryParts);</sql_query>
 		</preparedstatement>
-		<preparedstatement arg_count="2">
-			<args pool_type="4">
-				<arg arg_type="3" arg_index="1" />
-				<arg arg_type="3" arg_index="2" />
-			</args>
-			<statement_name>DGAddSceneryTag</statement_name>
-			<sql_query>INSERT INTO Metadata_Tags (SceneryPart, Tag) VALUES (?1, ?2);</sql_query>
+		<preparedstatement>
+			<statement_name>DGAddUIDataSurface</statement_name>
+			<sql_query>INSERT OR IGNORE INTO UIData (SceneryPartName, LabelTextSymbol, DescriptionTextSymbol, Icon, ReleaseGroup) SELECT u.SceneryPartName || '_SurfaceScaling', u.LabelTextSymbol, u.DescriptionTextSymbol, u.SceneryPartName, u.ReleaseGroup FROM UIData u JOIN ModularSceneryParts p ON p.SceneryPartName = u.SceneryPartName WHERE p.DataPrefabName = 'OnGrid' AND (u.SceneryPartName || '_SurfaceScaling') NOT IN (SELECT SceneryPartName FROM ModularSceneryParts);</sql_query>
+		</preparedstatement>
+		<preparedstatement>
+			<statement_name>DGAddPartsSurface</statement_name>
+			<sql_query>INSERT OR IGNORE INTO ModularSceneryParts (SceneryPartName, PrefabName, DataPrefabName, ContentPack, UGCID, BoxXSize, BoxYSize, BoxZSize) SELECT SceneryPartName || '_SurfaceScaling', SceneryPartName, 'SurfaceScaling', ContentPack, UGCID, BoxXSize, BoxYSize, BoxZSize FROM ModularSceneryParts WHERE DataPrefabName = 'OnGrid';</sql_query>
 		</preparedstatement>
 	</prepared_statements>
 </PscollectionRoot>

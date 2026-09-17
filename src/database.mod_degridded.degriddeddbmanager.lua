@@ -6,7 +6,8 @@ local database = api.database
 
 local DB = "ModularScenery"
 local PS = "Mod_Degridded_ModularScenery"
-local SUFFIX = "_SurfaceScaling"
+-- changed to new prefix but keeps old one in a goofy troop type of way to not mess with the couple parks saved in the short launch-compatfix period that was added for future freebuild and other mod compatability
+local SUFFIX = "_ScalableScenery"
 
 local DegriddedDBManager = {}
 
@@ -154,6 +155,9 @@ function DegriddedDBManager.AddVariantsToBrowser(_tNames)
     DegriddedDBManager._bBrowserAdded = _nAdded > 0
 end
 
+-- new name then older name
+local GROUPS = { "Scalable", "Surface" }
+
 -- creates non gridded variants
 function DegriddedDBManager.CreateVariants()
     if DegriddedDBManager._bInserted then
@@ -161,71 +165,24 @@ function DegriddedDBManager.CreateVariants()
     end
     BindStatements()
 
-    local _tGridItems = Query("DGGetAllSceneryPiecesByPrefabType", "OnGrid")
-    if _tGridItems == nil then
-        return
+    local _tNew = Query("DGGetNewVariantNames")
+    DegriddedDBManager._bInserted = true
+
+    for _, _sGroup in ipairs(GROUPS) do
+        Query("DGAddTags" .. _sGroup)
+        Query("DGAddTheming" .. _sGroup)
+        Query("DGAddSimulation" .. _sGroup)
+        Query("DGAddUIData" .. _sGroup)
+        Query("DGAddParts" .. _sGroup)
     end
 
-    local _nInserted = 0
     local _tNames = {}
-    local SCENERY_PREFAB_TYPE_COLUMN = 3
-    local SCENERY_PREFAB_COLUMN = 2
-    local SCENERY_PREFAB_NAME_COLUMN = 1
-    local PROPUI_ICON_COLUMN = 4
-    local PROPUI_PREFAB_NAME_COLUMN = 1
-    local SIMULATION_PREFAB_NAME_COLUMN = 1
-    local THEMING_PREFAB_NAME_COLUMN = 1
-
-    for _, _tPart in ipairs(_tGridItems) do
-        local _sOriginal = _tPart[SCENERY_PREFAB_NAME_COLUMN]
-        local _tUIData = Query("DGGetSceneryUIDataOfPart", _sOriginal)[1]
-        local _tSimulation = Query("DGGetScenerySimulationData", _sOriginal)[1]
-        local _tTheming = Query("DGGetSceneryThemingData", _sOriginal)
-        local _tTags = Query("DGGetSceneryMetadataTags", _sOriginal)
-
-        _tPart[SCENERY_PREFAB_TYPE_COLUMN] = "SurfaceScaling"
-        _tPart[SCENERY_PREFAB_COLUMN] = _sOriginal
-        _tPart[SCENERY_PREFAB_NAME_COLUMN] = _sOriginal .. SUFFIX
-        local _sVariant = _tPart[SCENERY_PREFAB_NAME_COLUMN]
-        Query("DGAddModularSceneryPart", _tPart[1], _tPart[2], _tPart[3], _tPart[4], _tPart[5], _tPart[6], _tPart[7],
-            _tPart[8])
-
-        if _tSimulation ~= nil then
-            _tSimulation[SIMULATION_PREFAB_NAME_COLUMN] = _sVariant
-            Query("DGAddScenerySimulationData", _tSimulation[1], _tSimulation[2], _tSimulation[3], _tSimulation[4],
-                _tSimulation[5])
+    if _tNew ~= nil then
+        for _, _tRow in ipairs(_tNew) do
+            table.insert(_tNames, _tRow[1] .. SUFFIX)
         end
-
-        if _tTheming ~= nil and #_tTheming > 0 then
-            _tTheming = _tTheming[1]
-            _tTheming[THEMING_PREFAB_NAME_COLUMN] = _sVariant
-            Query("DGAddSceneryThemingData", _tTheming[1], _tTheming[2], _tTheming[3], _tTheming[4])
-        end
-
-        if _tUIData ~= nil then
-            _tUIData[PROPUI_ICON_COLUMN] = _tUIData[PROPUI_PREFAB_NAME_COLUMN]
-            _tUIData[PROPUI_PREFAB_NAME_COLUMN] = _sVariant
-            Query("DGAddSceneryUIData", _tUIData[1], _tUIData[2], _tUIData[3], _tUIData[4], _tUIData[5])
-            table.insert(_tNames, _sVariant)
-        end
-
-        if _tTags ~= nil then
-            for _, _tTag in ipairs(_tTags) do
-                if _tTag[2] == "Filter_GridProperty_Grid" then
-                    _tTag[2] = "Filter_GridProperty_OffGrid"
-                end
-                _tTag[1] = _tTag[1] .. SUFFIX
-                Query("DGAddSceneryTag", _tTag[1], _tTag[2])
-            end
-        end
-
-        _nInserted = _nInserted + 1
     end
-
-    if _nInserted > 0 then
-        DegriddedDBManager._bInserted = true
-        global.pcall(DegriddedDBManager.AddVariantsToBrowser, _tNames)
-    end
+    global.pcall(DegriddedDBManager.AddVariantsToBrowser, _tNames)
 end
 
 return DegriddedDBManager
